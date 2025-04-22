@@ -62,10 +62,15 @@ def user_input_features():
 
     return pd.DataFrame(data, index=[0])
 
-user_input = user_input_features()
+# Get user input
+user_input_raw = user_input_features()
+
+# Align input with training feature order
+X = df.drop("fetal_health", axis=1)
+input_features = X.columns.tolist()
+user_input = user_input_raw.reindex(columns=input_features, fill_value=0)
 
 # Prepare training
-X = df.drop("fetal_health", axis=1)
 y = df["fetal_health"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -87,4 +92,3 @@ with st.expander("📈 Show Model Accuracy"):
     st.write(f"Model Accuracy on Test Set: `{acc * 100:.2f}%`")
     st.text("Classification Report:")
     st.text(classification_report(y_test, y_pred))
-
